@@ -1,7 +1,7 @@
-From 8fa516bcfb72d295e8929c88c44d28f6ca70ecb3 Mon Sep 17 00:00:00 2001
+From 712782c14490777fd09435fac5e2e72025016abb Mon Sep 17 00:00:00 2001
 From: Ahree Hong <ahreeh@amazon.com>
 Date: Thu, 2 May 2024 12:51:23 -0700
-Subject: [PATCH 6/8] Fix net interface lookup
+Subject: [PATCH 6/9] Fix net interface lookup
 
 We use the mac address in /proc/cmdline
 to be sure we use the interface that is
@@ -181,7 +181,7 @@ index 0000000..a4003d2
 +}
 \ No newline at end of file
 diff --git a/writefile/main.go b/writefile/main.go
-index abc18ac..3776031 100644
+index b8cce24..39e2ee7 100644
 --- a/writefile/main.go
 +++ b/writefile/main.go
 @@ -309,6 +309,22 @@ func appendToUserData(contents string, filePath string) error {
@@ -208,5 +208,5 @@ index abc18ac..3776031 100644
    runtime.LockOSThread()
    defer runtime.UnlockOSThread()
 -- 
-2.47.1
+2.50.1
 

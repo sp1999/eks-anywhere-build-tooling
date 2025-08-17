@@ -1,7 +1,7 @@
-From 6aefa76d0a7bfab14dffe1e05971746ce061bb31 Mon Sep 17 00:00:00 2001
+From 5a17bc600e37773c909f81519ca73ac9fde267f4 Mon Sep 17 00:00:00 2001
 From: Ahree Hong <ahreeh@amazon.com>
 Date: Thu, 2 May 2024 12:42:22 -0700
-Subject: [PATCH 4/8] Create VLAN tagged interface if vlan_id exists in
+Subject: [PATCH 4/9] Create VLAN tagged interface if vlan_id exists in
  /proc/cmdline
 
 This enables a vlan tagged machine to boot properly.
@@ -169,5 +169,5 @@ index 38103ff..cc8330a 100644
  	// Does the directory already exist? If so we can return early
  	exists, err := dirExists(mountPath, path)
 -- 
-2.47.1
+2.50.1
 

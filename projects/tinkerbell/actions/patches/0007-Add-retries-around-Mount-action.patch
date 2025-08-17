@@ -1,7 +1,7 @@
-From c661dd8f30ca5fbab7b43469881653b200371da1 Mon Sep 17 00:00:00 2001
+From 105dde8c8f88d3272b1fb91ef4b0be23d2e922d3 Mon Sep 17 00:00:00 2001
 From: Rahul Ganesh <rahulgab@amazon.com>
 Date: Tue, 10 Jun 2025 22:28:34 +0000
-Subject: [PATCH 7/8] Add retries around Mount action
+Subject: [PATCH 7/9] Add retries around Mount action
 
 Sometimes the block devices takes some time to load up eventhough
 the disk is already available. This could potentially be due to
@@ -15,7 +15,7 @@ Signed-off-by: Rahul Ganesh <rahulgab@amazon.com>
  1 file changed, 30 insertions(+), 2 deletions(-)
 
 diff --git a/writefile/main.go b/writefile/main.go
-index 3776031..5f283a5 100644
+index 39e2ee7..ea3cf55 100644
 --- a/writefile/main.go
 +++ b/writefile/main.go
 @@ -174,9 +174,21 @@ func main() {
@@ -66,5 +66,5 @@ index 3776031..5f283a5 100644
  	// Does the directory already exist? If so we can return early
  	exists, err := dirExists(mountPath, path)
 -- 
-2.47.1
+2.50.1
 

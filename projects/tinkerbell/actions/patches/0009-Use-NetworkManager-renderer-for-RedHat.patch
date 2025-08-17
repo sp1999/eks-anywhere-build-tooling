@@ -1,0 +1,156 @@
+From d19156df44719f3608987512719fe148835a953e Mon Sep 17 00:00:00 2001
+From: Prow Bot <prow@amazonaws.com>
+Date: Sat, 16 Aug 2025 23:39:37 -0700
+Subject: [PATCH 9/9] Use NetworkManager renderer for RedHat
+
+---
+ writefile/main.go | 98 +++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 73 insertions(+), 25 deletions(-)
+
+diff --git a/writefile/main.go b/writefile/main.go
+index ea3cf55..7437c93 100644
+--- a/writefile/main.go
++++ b/writefile/main.go
+@@ -31,6 +31,7 @@ const (
+ 	mountAction          = "/mountAction"
+ 	bootConfigAction     = "/usr/bin/bootconfig"
+ 	hegelUserDataVersion = "2009-04-04"
++	redhatOSFamily       = "redhat"
+ 	bottlerocketUserData = "/user-data.toml"
+ )
+ 
+@@ -81,6 +82,23 @@ var netplanTemplate = `network:
+             {{- end }}
+ `
+ 
++var netplanTemplateRedHat = `network:
++    version: 2
++    renderer: NetworkManager
++    ethernets:
++        id0:
++            match:
++                macaddress: {{ .HWAddr }}
++            addresses:
++                - {{ ToString .IPAddr }}
++            nameservers:
++                addresses: [{{ ToStringSlice .Nameservers ", " }}]
++            {{- if .Gateway }}
++            routes:
++                - to: default
++                  via: {{ ToString .Gateway }}
++`
++
+ func main() {
+ 	fmt.Printf("WriteFile - Write file to disk\n------------------------\n")
+ 
+@@ -95,6 +113,7 @@ func main() {
+ 	gid := os.Getenv("GID")
+ 	mode := os.Getenv("MODE")
+ 	dirMode := os.Getenv("DIRMODE")
++	osFamily := os.Getenv("OS_FAMILY")
+ 
+ 	if os.Getenv("STATIC_NETPLAN") == "true" {
+ 		ifname := determineNetIF()
+@@ -110,7 +129,12 @@ func main() {
+ 			}
+ 		}
+ 
+-		if n, template, err := vlanEnabled("/proc/cmdline"); err == nil {
++		if osFamily == redhatOSFamily {
++			// Use the RedHat template with NetworkManager renderer
++			netplanTemplate = netplanTemplateRedHat
++		}
++
++		if n, template, err := vlanEnabled("/proc/cmdline", osFamily); err == nil {
+ 			netplanTemplate = template
+ 			ifname = n
+ 		}
+@@ -397,7 +421,7 @@ func dirExists(mountPath, path string) (bool, error) {
+ 	return !os.IsNotExist(err), nil
+ }
+ 
+-func vlanEnabled(f string) (ifname, netplanTemplate string, err error) {
++func vlanEnabled(f, osFamily string) (ifname, netplanTemplate string, err error) {
+ 	ifname = determineNetIF()
+ 	// want "eth0.X", where X is between 1 and 4096
+ 	// This interface will exist if Hook creates it. Hook will create it if "vlan_id" is set in /proc/cmdline.
+@@ -406,29 +430,53 @@ func vlanEnabled(f string) (ifname, netplanTemplate string, err error) {
+ 		return "", "", fmt.Errorf("failed to match interface name %s with regex %s: %w", ifname, exp, err)
+ 	}
+ 
+-	netplanTemplate = `network:
+-    version: 2
+-    renderer: networkd
+-    ethernets:
+-        mainif:
+-            match:
+-                macaddress: {{ .HWAddr }}
+-            set-name: mainif
+-
+-    vlans:
+-        vlan{{ .VLANID }}:
+-            id: {{ .VLANID }}
+-            link: mainif
+-            addresses:
+-            - {{ ToString .IPAddr }}
+-            nameservers:
+-                addresses: [{{ ToStringSlice .Nameservers ", " }}]
+-            {{- if .Gateway }}
+-            routes:
+-                - to: default
+-                  via: {{ ToString .Gateway }}
+-            {{- end }}
+-`
++	if strings.ToLower(osFamily) == redhatOSFamily {
++		netplanTemplate = `network:
++		version: 2
++		renderer: NetworkManager
++		ethernets:
++			mainif:
++				match:
++					macaddress: {{ .HWAddr }}
++				set-name: mainif
++		vlans:
++			vlan{{ .VLANID }}:
++				id: {{ .VLANID }}
++				link: mainif
++				addresses:
++				- {{ ToString .IPAddr }}
++				nameservers:
++					addresses: [{{ ToStringSlice .Nameservers ", " }}]
++				{{- if .Gateway }}
++				routes:
++					- to: default
++					via: {{ ToString .Gateway }}
++				{{- end }}
++	`
++	} else {
++		netplanTemplate = `network:
++		version: 2
++		renderer: networkd
++		ethernets:
++			mainif:
++				match:
++					macaddress: {{ .HWAddr }}
++				set-name: mainif
++		vlans:
++			vlan{{ .VLANID }}:
++				id: {{ .VLANID }}
++				link: mainif
++				addresses:
++				- {{ ToString .IPAddr }}
++				nameservers:
++					addresses: [{{ ToStringSlice .Nameservers ", " }}]
++				{{- if .Gateway }}
++				routes:
++					- to: default
++					via: {{ ToString .Gateway }}
++				{{- end }}
++	`
++	}
+ 
+ 	return ifname, netplanTemplate, nil
+ }
+-- 
+2.50.1
+

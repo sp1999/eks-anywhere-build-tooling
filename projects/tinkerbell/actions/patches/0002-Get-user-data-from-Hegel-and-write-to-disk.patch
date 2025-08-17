@@ -1,7 +1,7 @@
-From bf184a742d070d1dd80726a56259b3dc4b1bf9c7 Mon Sep 17 00:00:00 2001
+From cee621f498bec98dbea38c2d3f84dc6f67d3daaa Mon Sep 17 00:00:00 2001
 From: Ahree Hong <ahreeh@amazon.com>
 Date: Thu, 2 May 2024 12:20:47 -0700
-Subject: [PATCH 2/8] Get user-data from Hegel and write to disk
+Subject: [PATCH 2/9] Get user-data from Hegel and write to disk
 
 Signed-off-by: Ahree Hong <ahreeh@amazon.com>
 ---
@@ -121,5 +121,5 @@ index 9e7d78f..67dd63e 100644
  	// to bootconfig tool
  	fqFilePath := filepath.Join(mountAction, filePath)
 -- 
-2.40.0
+2.50.1
 

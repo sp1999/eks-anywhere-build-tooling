@@ -1,7 +1,7 @@
-From 631794923b8714aba771c327bf1b12855da0ebdd Mon Sep 17 00:00:00 2001
+From 3a39a866456390d08b78bc33bce442c7f90a5e53 Mon Sep 17 00:00:00 2001
 From: Ahree Hong <ahreeh@amazon.com>
 Date: Thu, 2 May 2024 12:47:50 -0700
-Subject: [PATCH 5/8] Add static IP configuration for Bottlerocket
+Subject: [PATCH 5/9] Add static IP configuration for Bottlerocket
 
 Static IPs provide more reliable IP handling.
 Since Bottlerocket v1.11.0 we can use the MAC
@@ -15,7 +15,7 @@ Signed-off-by: Ahree Hong <ahreeh@amazon.com>
  1 file changed, 103 insertions(+), 25 deletions(-)
 
 diff --git a/writefile/main.go b/writefile/main.go
-index cc8330a..abc18ac 100644
+index cc8330a..b8cce24 100644
 --- a/writefile/main.go
 +++ b/writefile/main.go
 @@ -31,6 +31,7 @@ const (
@@ -225,5 +225,5 @@ index cc8330a..abc18ac 100644
  		return "", err
  	}
 -- 
-2.47.1
+2.50.1
 

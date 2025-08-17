@@ -1,7 +1,7 @@
-From 97ebaae73e0ed4ef00e37cda324d2e35372083ce Mon Sep 17 00:00:00 2001
+From 717dd945bc3659823ce1a4412860c621acc66534 Mon Sep 17 00:00:00 2001
 From: Rahul Ganesh <rahulgab@amazon.com>
 Date: Wed, 16 Jul 2025 21:41:32 +0000
-Subject: [PATCH 8/8] Fix file mounts on special dirs in cexec action
+Subject: [PATCH 8/9] Fix file mounts on special dirs in cexec action
 
 This commit changes how special directories (/dev, /proc, /sys) are mounted
 in the cexec action. Instead of creating new filesystem mounts with read-only
@@ -48,5 +48,5 @@ index 0925078..6d957d5 100644
  	}
  
 -- 
-2.47.1
+2.50.1
 

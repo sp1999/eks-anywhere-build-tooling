@@ -1,7 +1,7 @@
-From c7f290c63514901f38c269a6d5115969b86d815a Mon Sep 17 00:00:00 2001
+From df298476ed17f891aba94db91f941fe866cdc84b Mon Sep 17 00:00:00 2001
 From: Ahree Hong <ahreeh@amazon.com>
 Date: Tue, 8 Jul 2025 01:04:58 +0000
-Subject: [PATCH 3/8] Write DHCP offer to static Netplan file
+Subject: [PATCH 3/9] Write DHCP offer to static Netplan file
 
 This is useful when the host being provisioned
 will run the Boots DHCP server. This happens
@@ -421,5 +421,5 @@ index 67dd63e..38103ff 100644
  	// Does the directory already exist? If so we can return early
  	exists, err := dirExists(mountPath, path)
 -- 
-2.47.1
+2.50.1
 
